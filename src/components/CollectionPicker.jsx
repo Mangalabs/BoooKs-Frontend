@@ -1,6 +1,6 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Users } from "lucide-react";
 
-export default function CollectionPicker({ collections, activeId, activeCollection, showAllCollections, onShowAll, onSelect, onRename, onDelete }) {
+export default function CollectionPicker({ collections, activeId, activeCollection, showAllCollections, onShowAll, onSelect, onRename, onDelete, onManageOwners }) {
   return <div className="collection-picker">
     <button className={`all-collections-button ${showAllCollections ? "active" : ""}`} onClick={onShowAll}>All collections</button>
     <select className="select-control" aria-label="Select collection" value={activeId} onChange={(event) => onSelect(event.target.value)}>
@@ -9,6 +9,7 @@ export default function CollectionPicker({ collections, activeId, activeCollecti
     </select>
     {activeCollection && <>
       <button className="collection-action-button" onClick={onRename}><Pencil size={14} /> Rename collection</button>
+      <button className="collection-action-button" onClick={onManageOwners}><Users size={14} /> Manage owners</button>
       <button className="icon-button danger-button" title={`Delete ${activeCollection.name}`} onClick={onDelete}><Trash2 size={14} /></button>
     </>}
   </div>;

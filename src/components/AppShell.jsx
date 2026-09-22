@@ -3,6 +3,7 @@ import { BookOpen, Leaf, LogOut, Plus, Search } from "lucide-react";
 import { api } from "../api";
 import AddBookModal from "./AddBookModal";
 import CollectionModal from "./CollectionModal";
+import OwnersModal from "./OwnersModal";
 import ThemeMenu from "./ThemeMenu";
 import CollectionBooksView from "./CollectionBooksView";
 import AllCollectionsView from "./AllCollectionsView";
@@ -34,6 +35,7 @@ export default function AppShell({ theme, onThemeChange, bookView, onBookViewCha
   const [error, setError] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [collectionModal, setCollectionModal] = useState(null);
+  const [ownersModal, setOwnersModal] = useState(null);
   const [showAllBooks, setShowAllBooks] = useState(false);
   const [showAllCollections, setShowAllCollections] = useState(false);
   const [locationModal, setLocationModal] = useState(null);
@@ -140,7 +142,7 @@ export default function AppShell({ theme, onThemeChange, bookView, onBookViewCha
       <LocationSidebar activeId={activeId} locations={locations} books={books} locationFilter={locationFilter} loading={loading} citation={citation} onSelectAll={() => { setLocationFilter(""); setShowAllBooks(true); }} onSelectLocation={(locationId) => { setLocationFilter(locationId); setShowAllBooks(true); }} onCreateLocation={() => setLocationModal("create")} onRenameLocation={setLocationModal} onDeleteLocation={deleteLocation} onCreateCollection={() => setCollectionModal("create")} />
       <section className="content">
         {activeId && <BookViewToggle mode={bookView} onChange={onBookViewChange} />}
-        <CollectionPicker collections={collections} activeId={activeId} activeCollection={activeCollection} showAllCollections={showAllCollections} onShowAll={() => { setShowAllCollections(true); setShowAllBooks(false); }} onSelect={(id) => { setActiveId(id); setShowAllCollections(false); }} onRename={() => setCollectionModal(activeCollection)} onDelete={() => deleteCollection(activeCollection)} />
+        <CollectionPicker collections={collections} activeId={activeId} activeCollection={activeCollection} showAllCollections={showAllCollections} onShowAll={() => { setShowAllCollections(true); setShowAllBooks(false); }} onSelect={(id) => { setActiveId(id); setShowAllCollections(false); }} onRename={() => setCollectionModal(activeCollection)} onDelete={() => deleteCollection(activeCollection)} onManageOwners={() => setOwnersModal(activeCollection)} />
         {showAllCollections ? <AllCollectionsView collections={collections} onSelect={(id) => { setActiveId(id); setShowAllCollections(false); }} onCreate={() => setCollectionModal("create")} /> : showAllBooks && activeCollection ? <CollectionBooksView collection={activeCollection} books={books} locations={locations} locationFilter={locationFilter} viewMode={bookView} onBack={() => { setShowAllBooks(false); setLocationFilter(""); }} onAddBook={() => setShowAdd(true)} onAssignLocation={assignLocation} onDeleteBook={deleteBook} onUpdateBook={updateBook} /> : <div className="overview-page-layout"><div className="overview-main-column">
         <div className="page-intro-with-detail"><div className="content-heading"><div><p className="eyebrow">Your library / {activeCollection?.name || "Getting started"}</p><h1>{activeCollection?.name || "A new reading life"}</h1><p className="lede">A little order for the stories that stay with you.</p></div>{activeId ? <button className="button button-primary" onClick={() => setShowAdd(true)}><Plus size={17} /> Add a book</button> : <button className="button button-primary" onClick={() => setCollectionModal("create")}><Plus size={17} /> Create a collection</button>}</div></div>
         {error && <div className="notice">{error}</div>}
@@ -154,6 +156,7 @@ export default function AppShell({ theme, onThemeChange, bookView, onBookViewCha
     </main>
     {showAdd && activeId && <AddBookModal collectionId={activeId} onClose={() => setShowAdd(false)} onAdded={() => api.books(activeId).then(setBooks)} />}
     {collectionModal && <CollectionModal collection={collectionModal === "create" ? null : collectionModal} onClose={() => setCollectionModal(null)} onSaved={saveCollection} />}
+    {ownersModal && <OwnersModal collection={ownersModal} onClose={() => setOwnersModal(null)} />}
     {locationModal && activeId && <LocationModal collectionId={activeId} location={locationModal === "create" ? null : locationModal} onClose={() => setLocationModal(null)} onSaved={saveLocation} />}
   </div>;
 }
